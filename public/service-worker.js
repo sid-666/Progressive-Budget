@@ -1,7 +1,7 @@
 const FILES_TO_CACHE = [
     '/',
     '/index.html',
-    '/style.css',
+    '/styles.css',
     '/index.js',
     '/icons/icon-192x192.png',
     '/icons/icon-512x512.png',
@@ -41,35 +41,34 @@ self.addEventListener("activate", function (evt) {
 });
 
 // fetch
-self.addEventListener("fetch", function(evt) {
+self.addEventListener("fetch", function (evt) {
     if (evt.request.url.includes("/api/")) {
-      evt.respondWith(
-        caches.open(DATA_CACHE_NAME).then(cache => {
-          return fetch(evt.request)
-            .then(response => {
-              // If the response was good, clone it and store it in the cache.
-              if (response.status === 200) {
-                cache.put(evt.request.url, response.clone());
-              }
-  
-              return response;
-            })
-            .catch(err => {
-              // Network request failed, try to get it from the cache.
-              return cache.match(evt.request);
-            });
-        }).catch(err => console.log(err))
-      );
-  
-      return;
+        evt.respondWith(
+            caches.open(DATA_CACHE_NAME).then(cache => {
+                return fetch(evt.request)
+                    .then(response => {
+                        // If the response was good, clone it and store it in the cache.
+                        if (response.status === 200) {
+                            cache.put(evt.request.url, response.clone());
+                        }
+
+                        return response;
+                    })
+                    .catch(err => {
+                        // Network request failed, try to get it from the cache.
+                        return cache.match(evt.request);
+                    });
+            }).catch(err => console.log(err))
+        );
+
+        return;
     }
-  
+
     evt.respondWith(
-      caches.open(CACHE_NAME).then(cache => {
-        return cache.match(evt.request).then(response => {
-          return response || fetch(evt.request);
-        });
-      })
+        caches.open(CACHE_NAME).then(cache => {
+            return cache.match(evt.request).then(response => {
+                return response || fetch(evt.request);
+            });
+        })
     );
-  });
-  
+});
